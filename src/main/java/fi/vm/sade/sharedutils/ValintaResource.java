@@ -1,6 +1,7 @@
 package fi.vm.sade.sharedutils;
 
 public enum ValintaResource {
+    TEMPORARY,
     KOOSTE,
     LASKENTA,
     SIJOITTELU,
@@ -13,5 +14,7 @@ public enum ValintaResource {
     HAKUKOHDE,
     VALINTATAPAJONO,
     VALINNANVAIHE,
-    VALINTAKOE
+    VALINTAKOE,
+    SIJOITTELUAKTIVOINTI,
+    HAKEMUKSET
 }
