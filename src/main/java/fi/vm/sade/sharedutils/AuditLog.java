@@ -40,7 +40,7 @@ public class AuditLog {
     private static final String UNKNOWN_SESSION = "Unknown session";
     private static final User ANONYMOUS_USER;
     private static Oid DUMMYOID;
-    private static final String TARGET_EPASELVA = "Muutoksen kohde tuntematon tai itse muutoksen implikoima";
+    private static final String TARGET_EPASELVA = "Tuntematon kohde";
 
     static {
         User anon = null;
@@ -53,24 +53,16 @@ public class AuditLog {
         ANONYMOUS_USER = anon;
     }
 
-    //Tätä käytetään epäselvissä tapauksissa, kun halutaan luoda Change-objekti itse. Sisältää HttpServletRequestin.
-    @Deprecated
-    public static void log(Operation operation, ValintaResource valintaResource, String targetOid, Changes changes, HttpServletRequest request) {
-        User user = getUser(request);
-        Target.Builder target = getTarget(valintaResource, targetOid != null ? targetOid : TARGET_EPASELVA );
-
-        AUDITLOG.log(user, operation, target.build(), changes);
-    }
-
-    //Tätä käytetään kun on saatavilla DTO before ja DTO after sekä HttpServletRequest.
     public static <T> void log(Operation operation, ValintaResource valintaResource, String targetOid, T dtoAfterOperation, T dtoBeforeOperation, HttpServletRequest request, @NotNull Map<String, String> additionalInfo) {
         User user = getUser(request);
         Target.Builder target = getTarget(valintaResource, targetOid);
-
         additionalInfo.forEach(target::setField);
-
-        Changes changes = getChanges(dtoAfterOperation, dtoBeforeOperation).build();
-        //LOG.info("user: "+user +" op: " + operation+ " target: " + target.build() +" changes: "+ changes);
+        Changes changes;
+        if(dtoAfterOperation == null && dtoBeforeOperation == null) {
+            changes = new Changes.Builder().build();
+        } else {
+            changes = getChanges(dtoAfterOperation, dtoBeforeOperation).build();
+        }
         AUDITLOG.log(user, operation, target.build(), changes);
     }
 
@@ -78,16 +70,17 @@ public class AuditLog {
         log(operation, valintaResource, targetOid, dtoAfterOperation, dtoBeforeOperation, request, Maps.newHashMap());
     }
 
-    public static User createUserFromAuditSessionParams(String userOid, InetAddress ip, String session, String userAgent) {
-        return getUser(userOid, ip, session, userAgent);
-    }
-
-    private static User getUser(@NotNull HttpServletRequest request) {
+    private static User getUser(HttpServletRequest request) {
         try {
-            String userAgent = getUserAgentHeader(request);
-            String session = getSession(request);
-            InetAddress ip = getInetAddress(request);
             String userOid = getUserOidFromSession();
+            String userAgent = null;
+            String session = null;
+            InetAddress ip = null;
+            if(request != null) {
+                userAgent = getUserAgentHeader(request);
+                session = getSession(request);
+                ip = getInetAddress(request);
+            }
             return getUser(userOid, ip, session, userAgent);
         } catch(Exception e) {
             LOG.error("Recording anonymous user", e);
@@ -157,7 +150,7 @@ public class AuditLog {
     }
 
     //Temporarily public for debugging
-    public static <T> Changes.Builder getChanges(@Nullable T afterOperation, @Nullable T beforeOperation) {
+    static <T> Changes.Builder getChanges(@Nullable T afterOperation, @Nullable T beforeOperation) {
         Changes.Builder builder = new Changes.Builder();
         try {
             if (afterOperation == null && beforeOperation != null) {
