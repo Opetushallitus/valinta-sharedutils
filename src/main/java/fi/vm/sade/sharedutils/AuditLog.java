@@ -40,7 +40,7 @@ public class AuditLog {
     private static final String UNKNOWN_SESSION = "Unknown session";
     private static final User ANONYMOUS_USER;
     private static Oid DUMMYOID;
-    private static final String TARGET_EPASELVA = "Tuntematon kohde";
+    private static final String TARGET_EPASELVA = "Tuntematon tai muutosten implikoima kohde";
 
     static {
         User anon = null;
@@ -57,12 +57,7 @@ public class AuditLog {
         User user = getUser(request);
         Target.Builder target = getTarget(valintaResource, targetOid);
         additionalInfo.forEach(target::setField);
-        Changes changes;
-        if(dtoAfterOperation == null && dtoBeforeOperation == null) {
-            changes = new Changes.Builder().build();
-        } else {
-            changes = getChanges(dtoAfterOperation, dtoBeforeOperation).build();
-        }
+        Changes changes = getChanges(dtoAfterOperation, dtoBeforeOperation).build();
         AUDITLOG.log(user, operation, target.build(), changes);
     }
 
@@ -216,6 +211,9 @@ public class AuditLog {
     }
 
     private static Target.Builder getTarget(ValintaResource valintaResource, String targetOid) {
+        if (targetOid == null) {
+            targetOid = TARGET_EPASELVA;
+        }
         return new Target.Builder()
                 .setField("type", valintaResource.name())
                 .setField("oid", targetOid);
