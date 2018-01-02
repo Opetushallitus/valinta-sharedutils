@@ -32,10 +32,10 @@ public class AuditLog {
     private static final Audit AUDITLOG = new Audit(new AuditLogger(), "valintaperusteet", ApplicationType.BACKEND);
     private static final Logger LOG = LoggerFactory.getLogger(AuditLog.class);
     private static final JsonParser parser = new JsonParser();
-    static final int MAX_FIELD_LENGTH = 32766;
+    private static final int MAX_FIELD_LENGTH = 32766;
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    public static final String UNKNOWN_USER_AGENT = "Unknown user agent";
+    private static final String UNKNOWN_USER_AGENT = "Unknown user agent";
     private static final String DUMMYOID_STR = "1.2.999.999.99.99999999999";
     private static final String UNKNOWN_SESSION = "Unknown session";
     private static final User ANONYMOUS_USER;
@@ -88,7 +88,7 @@ public class AuditLog {
         return request.getHeader("User-Agent");
     }
 
-    public static String getSession(HttpServletRequest request) {
+    private static String getSession(HttpServletRequest request) {
         try {
             return request.getSession(false).getId();
         } catch(Exception e) {
@@ -97,7 +97,7 @@ public class AuditLog {
         }
     }
 
-    public static InetAddress getInetAddress(HttpServletRequest request) {
+    private static InetAddress getInetAddress(HttpServletRequest request) {
         try {
             return InetAddress.getByName(request.getRemoteAddr());
         } catch(Exception e) {
@@ -115,7 +115,7 @@ public class AuditLog {
         }
     }
 
-    public static String getUserOidFromSession() {
+    private static String getUserOidFromSession() {
         SecurityContext context = SecurityContextHolder.getContext();
         if (context != null) {
             Principal p = context.getAuthentication();
@@ -144,8 +144,7 @@ public class AuditLog {
 
     }
 
-    //Temporarily public for debugging
-    static <T> Changes.Builder getChanges(@Nullable T afterOperation, @Nullable T beforeOperation) {
+    private static <T> Changes.Builder getChanges(@Nullable T afterOperation, @Nullable T beforeOperation) {
         Changes.Builder builder = new Changes.Builder();
         try {
             if (afterOperation == null && beforeOperation != null) {
@@ -175,7 +174,7 @@ public class AuditLog {
         return parser.parse(json.toString()).getAsJsonArray();
     }
 
-    static void traverseAndTruncate(JsonNode data) {
+    private static void traverseAndTruncate(JsonNode data) {
         if (data.isObject()) {
             ObjectNode object = (ObjectNode) data;
             for (Iterator<String> it = data.fieldNames(); it.hasNext(); ) {

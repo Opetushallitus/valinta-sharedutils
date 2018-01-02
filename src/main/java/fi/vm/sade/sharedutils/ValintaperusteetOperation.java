@@ -63,7 +63,4 @@ public enum ValintaperusteetOperation implements Operation{
     SIJOITTELU_KAYNNISTYS;
     //
     //HAKIJARYHMA_VALINTATAPAJONO_JARJESTAMINEN;
-
-    private ValintaperusteetOperation() {
-    }
 }
