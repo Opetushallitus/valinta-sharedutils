@@ -4,9 +4,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>fi.vm.sade.valintaperusteet</groupId>
+        <artifactId>valintaperusteet</artifactId>
+        <version>4.1-SNAPSHOT</version>
+    </parent>
+
     <groupId>fi.vm.sade.sharedutils</groupId>
     <artifactId>Sharedutils</artifactId>
     <version>4.1-SNAPSHOT</version>
+
     <dependencies>
         <dependency>
             <groupId>fi.vm.sade</groupId>
@@ -31,11 +38,4 @@
             <artifactId>spring-security-core</artifactId>
         </dependency>
     </dependencies>
-
-    <parent>
-        <groupId>fi.vm.sade.valintaperusteet</groupId>
-        <artifactId>valintaperusteet</artifactId>
-        <version>4.1-SNAPSHOT</version>
-    </parent>
-
 </project>
