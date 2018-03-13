@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
@@ -117,14 +118,10 @@ public class AuditLog {
 
     private static String getUserOidFromSession() {
         SecurityContext context = SecurityContextHolder.getContext();
-        if (context != null) {
-            Principal p = context.getAuthentication();
-            if (p != null) {
-                return p.getName();
-            }
-        }
-        LOG.error("Returning null user oid");
-        return null;
+        Assert.notNull(context, "Null SecurityContext! Make sure to only call this method from request thread.");
+        Principal p = context.getAuthentication();
+        Assert.notNull(p, "Null principal! Something wrong in the authentication?");
+        return p.getName();
     }
 
     private static User getUser(String userOid, InetAddress ip, String session, String userAgent) {
