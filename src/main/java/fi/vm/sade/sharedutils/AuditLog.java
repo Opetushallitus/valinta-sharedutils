@@ -32,6 +32,7 @@ import java.net.UnknownHostException;
 import java.security.Principal;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 
 public class AuditLog {
     private static final Logger LOG = LoggerFactory.getLogger(AuditLog.class);
@@ -85,6 +86,12 @@ public class AuditLog {
             return ANONYMOUS_USER;
         }
 
+    }
+
+    public static String username() {
+        return Optional.ofNullable((Principal) SecurityContextHolder.getContext().getAuthentication()).orElse(
+                () -> "Kirjautumaton käyttäjä"
+        ).getName();
     }
 
     private static String getUserAgentHeader(HttpServletRequest request) {
