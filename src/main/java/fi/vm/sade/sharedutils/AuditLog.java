@@ -88,7 +88,7 @@ public class AuditLog {
 
     }
 
-    public static String username() {
+    public static String loggedInUserOid() {
         return Optional.ofNullable((Principal) SecurityContextHolder.getContext().getAuthentication()).orElse(
                 () -> "Kirjautumaton käyttäjä"
         ).getName();
