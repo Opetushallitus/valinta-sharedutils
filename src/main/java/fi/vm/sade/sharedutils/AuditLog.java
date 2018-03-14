@@ -32,7 +32,6 @@ import java.net.UnknownHostException;
 import java.security.Principal;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Optional;
 
 public class AuditLog {
     private static final Logger LOG = LoggerFactory.getLogger(AuditLog.class);
@@ -71,7 +70,7 @@ public class AuditLog {
 
     public static User getUser(HttpServletRequest request) {
         try {
-            String userOid = getUserOidFromSession();
+            String userOid = loggedInUserOid();
             String userAgent = null;
             String session = null;
             InetAddress ip = null;
@@ -89,9 +88,11 @@ public class AuditLog {
     }
 
     public static String loggedInUserOid() {
-        return Optional.ofNullable((Principal) SecurityContextHolder.getContext().getAuthentication()).orElse(
-                () -> "Kirjautumaton käyttäjä"
-        ).getName();
+        SecurityContext context = SecurityContextHolder.getContext();
+        Assert.notNull(context, "Null SecurityContext! Make sure to only call this method from request thread.");
+        Principal p = context.getAuthentication();
+        Assert.notNull(p, "Null principal! Something wrong in the authentication?");
+        return p.getName();
     }
 
     private static String getUserAgentHeader(HttpServletRequest request) {
@@ -123,14 +124,6 @@ public class AuditLog {
             LOG.error("Couldn't log oid {} for log entry", usernameFromSession, e);
             return null;
         }
-    }
-
-    private static String getUserOidFromSession() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        Assert.notNull(context, "Null SecurityContext! Make sure to only call this method from request thread.");
-        Principal p = context.getAuthentication();
-        Assert.notNull(p, "Null principal! Something wrong in the authentication?");
-        return p.getName();
     }
 
     private static User getUser(String userOid, InetAddress ip, String session, String userAgent) {
