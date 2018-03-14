@@ -10,7 +10,12 @@ import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import fi.vm.sade.auditlog.*;
+
+import fi.vm.sade.auditlog.Audit;
+import fi.vm.sade.auditlog.Changes;
+import fi.vm.sade.auditlog.Operation;
+import fi.vm.sade.auditlog.Target;
+import fi.vm.sade.auditlog.User;
 import org.ietf.jgss.GSSException;
 import org.ietf.jgss.Oid;
 import org.jetbrains.annotations.Nullable;
@@ -29,8 +34,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class AuditLog {
-
-    private static final Audit AUDITLOG = new Audit(new AuditLogger(), "valintaperusteet", ApplicationType.BACKEND);
     private static final Logger LOG = LoggerFactory.getLogger(AuditLog.class);
     private static final JsonParser parser = new JsonParser();
     private static final int MAX_FIELD_LENGTH = 32766;
@@ -54,19 +57,18 @@ public class AuditLog {
         ANONYMOUS_USER = anon;
     }
 
-    public static <T> void log(Operation operation, ValintaResource valintaResource, String targetOid, T dtoAfterOperation, T dtoBeforeOperation, HttpServletRequest request, @NotNull Map<String, String> additionalInfo) {
-        User user = getUser(request);
+    public static <T> void log(Audit audit, User user, Operation operation, ValintaResource valintaResource, String targetOid, T dtoAfterOperation, T dtoBeforeOperation, @NotNull Map<String, String> additionalInfo) {
         Target.Builder target = getTarget(valintaResource, targetOid);
         additionalInfo.forEach(target::setField);
         Changes changes = getChanges(dtoAfterOperation, dtoBeforeOperation).build();
-        AUDITLOG.log(user, operation, target.build(), changes);
+        audit.log(user, operation, target.build(), changes);
     }
 
-    public static <T> void log(Operation operation, ValintaResource valintaResource, String targetOid, T dtoAfterOperation, T dtoBeforeOperation, HttpServletRequest request) {
-        log(operation, valintaResource, targetOid, dtoAfterOperation, dtoBeforeOperation, request, Maps.newHashMap());
+    public static <T> void log(Audit audit, User user, Operation operation, ValintaResource valintaResource, String targetOid, T dtoAfterOperation, T dtoBeforeOperation) {
+        log(audit, user, operation, valintaResource, targetOid, dtoAfterOperation, dtoBeforeOperation, Maps.newHashMap());
     }
 
-    private static User getUser(HttpServletRequest request) {
+    public static User getUser(HttpServletRequest request) {
         try {
             String userOid = getUserOidFromSession();
             String userAgent = null;
