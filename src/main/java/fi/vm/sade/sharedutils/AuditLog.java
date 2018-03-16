@@ -28,7 +28,6 @@ import org.springframework.util.Assert;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.security.Principal;
 import java.util.Iterator;
 import java.util.Map;
@@ -39,23 +38,7 @@ public class AuditLog {
     private static final int MAX_FIELD_LENGTH = 32766;
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    private static final String UNKNOWN_USER_AGENT = "Unknown user agent";
-    private static final String DUMMYOID_STR = "1.2.999.999.99.99999999999";
-    private static final String UNKNOWN_SESSION = "Unknown session";
-    private static final User ANONYMOUS_USER;
-    private static Oid DUMMYOID;
     private static final String TARGET_EPASELVA = "Tuntematon tai muutosten implikoima kohde";
-
-    static {
-        User anon = null;
-        try {
-            DUMMYOID = new Oid(DUMMYOID_STR);
-            anon = new User(DUMMYOID, InetAddress.getByName(""), null, null);
-        } catch(GSSException | UnknownHostException e) {
-            LOG.error("Creating anonymous anon failed", e);
-        }
-        ANONYMOUS_USER = anon;
-    }
 
     public static <T> void log(Audit audit, User user, Operation operation, ValintaResource valintaResource, String targetOid, T dtoAfterOperation, T dtoBeforeOperation, @NotNull Map<String, String> additionalInfo) {
         Target.Builder target = getTarget(valintaResource, targetOid);
@@ -69,16 +52,11 @@ public class AuditLog {
     }
 
     public static User getUser(HttpServletRequest request) {
-        try {
-            String userOid = loggedInUserOid();
-            String userAgent = getUserAgentHeader(request);
-            String session = getSession(request);
-            InetAddress ip = getInetAddress(request);
-            return getUser(userOid, ip, session, userAgent);
-        } catch(Exception e) {
-            LOG.error("Recording anonymous user", e);
-            return ANONYMOUS_USER;
-        }
+        String userOid = loggedInUserOid();
+        String userAgent = getUserAgentHeader(request);
+        String session = getSession(request);
+        InetAddress ip = getInetAddress(request);
+        return getUser(userOid, ip, session, userAgent);
     }
 
     public static String loggedInUserOid() {
@@ -111,30 +89,12 @@ public class AuditLog {
         }
     }
 
-    public static Oid getOid(String usernameFromSession) {
-        try {
-            return new Oid(usernameFromSession);
-        } catch(Exception e) {
-            LOG.error("Couldn't log oid {} for log entry", usernameFromSession, e);
-            return null;
-        }
-    }
-
     private static User getUser(String userOid, InetAddress ip, String session, String userAgent) {
-        Oid oid;
         try {
-            oid = getOid(userOid);
-        } catch(Exception e) {
-            LOG.error("Recording anonymous user", e);
-            oid = DUMMYOID;
+            return new User(new Oid(userOid), ip, session, userAgent);
+        } catch (GSSException e) {
+            throw new RuntimeException(e);
         }
-        return new User(
-                oid,
-                ip != null ? ip : InetAddress.getLoopbackAddress(),
-                session != null ? session : UNKNOWN_SESSION,
-                userAgent != null ? userAgent : UNKNOWN_USER_AGENT
-        );
-
     }
 
     private static <T> Changes.Builder getChanges(@Nullable T afterOperation, @Nullable T beforeOperation) {
