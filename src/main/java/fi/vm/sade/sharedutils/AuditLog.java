@@ -71,20 +71,14 @@ public class AuditLog {
     public static User getUser(HttpServletRequest request) {
         try {
             String userOid = loggedInUserOid();
-            String userAgent = null;
-            String session = null;
-            InetAddress ip = null;
-            if(request != null) {
-                userAgent = getUserAgentHeader(request);
-                session = getSession(request);
-                ip = getInetAddress(request);
-            }
+            String userAgent = getUserAgentHeader(request);
+            String session = getSession(request);
+            InetAddress ip = getInetAddress(request);
             return getUser(userOid, ip, session, userAgent);
         } catch(Exception e) {
             LOG.error("Recording anonymous user", e);
             return ANONYMOUS_USER;
         }
-
     }
 
     public static String loggedInUserOid() {
