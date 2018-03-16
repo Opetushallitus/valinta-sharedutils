@@ -10,7 +10,6 @@
         <version>4.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>fi.vm.sade.sharedutils</groupId>
     <artifactId>sharedutils</artifactId>
     <version>4.1-SNAPSHOT</version>
     <dependencies>
