@@ -8,9 +8,11 @@
         <groupId>fi.vm.sade.valintaperusteet</groupId>
         <artifactId>valintaperusteet</artifactId>
         <version>4.1-SNAPSHOT</version>
+        <relativePath>..</relativePath>
     </parent>
 
     <artifactId>sharedutils</artifactId>
+    <name>Sharedutils</name>
 
     <dependencies>
         <dependency>
