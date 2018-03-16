@@ -16,6 +16,7 @@ import fi.vm.sade.auditlog.Changes;
 import fi.vm.sade.auditlog.Operation;
 import fi.vm.sade.auditlog.Target;
 import fi.vm.sade.auditlog.User;
+import fi.vm.sade.javautils.http.HttpServletRequestUtils;
 import org.ietf.jgss.GSSException;
 import org.ietf.jgss.Oid;
 import org.jetbrains.annotations.Nullable;
@@ -82,7 +83,7 @@ public class AuditLog {
 
     private static InetAddress getInetAddress(HttpServletRequest request) {
         try {
-            return InetAddress.getByName(request.getRemoteAddr());
+            return InetAddress.getByName(HttpServletRequestUtils.getRemoteAddress(request));
         } catch(Exception e) {
             LOG.error("Couldn't log InetAddress for log entry", e);
             return null;
