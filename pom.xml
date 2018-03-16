@@ -11,9 +11,8 @@
     </parent>
 
     <groupId>fi.vm.sade.sharedutils</groupId>
-    <artifactId>Sharedutils</artifactId>
+    <artifactId>sharedutils</artifactId>
     <version>4.1-SNAPSHOT</version>
-
     <dependencies>
         <dependency>
             <groupId>fi.vm.sade</groupId>
