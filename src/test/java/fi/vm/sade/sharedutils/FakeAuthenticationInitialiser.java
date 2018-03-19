@@ -7,8 +7,8 @@ import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 
-public class RequestTester {
-    private static Logger LOG = LoggerFactory.getLogger(RequestTester.class);
+public class FakeAuthenticationInitialiser {
+    private static Logger LOG = LoggerFactory.getLogger(FakeAuthenticationInitialiser.class);
     public static void fakeAuthentication() {
         SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_GLOBAL);
         SecurityContextImpl context = new SecurityContextImpl();
@@ -16,7 +16,7 @@ public class RequestTester {
         SecurityContextHolder.setContext(context);
     }
 
-    public RequestTester() {
+    public FakeAuthenticationInitialiser() {
         LOG.warn("Initialising fake authentication");
         fakeAuthentication();
     }
