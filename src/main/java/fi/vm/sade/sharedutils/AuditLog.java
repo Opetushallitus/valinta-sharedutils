@@ -19,7 +19,6 @@ import fi.vm.sade.auditlog.User;
 import fi.vm.sade.javautils.http.HttpServletRequestUtils;
 import org.ietf.jgss.GSSException;
 import org.ietf.jgss.Oid;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContext;
@@ -98,7 +97,7 @@ public class AuditLog {
         }
     }
 
-    private static <T> Changes.Builder getChanges(@Nullable T afterOperation, @Nullable T beforeOperation) {
+    private static <T> Changes.Builder getChanges(T afterOperation, T beforeOperation) {
         Changes.Builder builder = new Changes.Builder();
         try {
             if (afterOperation == null && beforeOperation != null) {
