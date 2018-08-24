@@ -40,15 +40,14 @@ public class AuditLog {
 
     private static final String TARGET_EPASELVA = "Tuntematon tai muutosten implikoima kohde";
 
-    public static <T> void log(Audit audit, User user, Operation operation, ValintaResource valintaResource, String targetOid, T dtoAfterOperation, T dtoBeforeOperation, @NotNull Map<String, String> additionalInfo) {
+    public static <T> void log(Audit audit, User user, Operation operation, ValintaResource valintaResource, String targetOid, Changes changes, @NotNull Map<String, String> additionalInfo) {
         Target.Builder target = getTarget(valintaResource, targetOid);
         additionalInfo.forEach(target::setField);
-        Changes changes = getChanges(dtoAfterOperation, dtoBeforeOperation).build();
         audit.log(user, operation, target.build(), changes);
     }
 
-    public static <T> void log(Audit audit, User user, Operation operation, ValintaResource valintaResource, String targetOid, T dtoAfterOperation, T dtoBeforeOperation) {
-        log(audit, user, operation, valintaResource, targetOid, dtoAfterOperation, dtoBeforeOperation, Maps.newHashMap());
+    public static <T> void log(Audit audit, User user, Operation operation, ValintaResource valintaResource, String targetOid, Changes changes) {
+        log(audit, user, operation, valintaResource, targetOid, changes, Maps.newHashMap());
     }
 
     public static User getUser(HttpServletRequest request) {
