@@ -42,6 +42,9 @@ public class AuditLog {
 
     public static <T> void log(Audit audit, User user, Operation operation, ValintaResource valintaResource, String targetOid, Changes changes, @NotNull Map<String, String> additionalInfo) {
         Target.Builder target = getTarget(valintaResource, targetOid);
+        if (additionalInfo.size() > 0) {
+            additionalInfo.forEach(target::setField);
+        }
         additionalInfo.forEach(target::setField);
         audit.log(user, operation, target.build(), changes);
     }
