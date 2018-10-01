@@ -17,6 +17,7 @@ import fi.vm.sade.auditlog.Operation;
 import fi.vm.sade.auditlog.Target;
 import fi.vm.sade.auditlog.User;
 import fi.vm.sade.javautils.http.HttpServletRequestUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.ietf.jgss.GSSException;
 import org.ietf.jgss.Oid;
 import org.slf4j.Logger;
@@ -42,7 +43,7 @@ public class AuditLog {
 
     public static <T> void log(Audit audit, User user, Operation operation, ValintaResource valintaResource, String targetOid, Changes changes, @NotNull Map<String, String> additionalInfo) {
         Target.Builder target = getTarget(valintaResource, targetOid);
-        if (additionalInfo.size() > 0) {
+        if (!MapUtils.isEmpty(additionalInfo)) {
             additionalInfo.forEach(target::setField);
         }
         additionalInfo.forEach(target::setField);
