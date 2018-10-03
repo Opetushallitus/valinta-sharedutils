@@ -59,7 +59,7 @@ public class AuditLog {
         try {
             return request.getSession(false).getId();
         } catch(Exception e) {
-            LOG.error("Couldn't log session for requst {}", request);
+            LOG.error("Couldn't log session for request {}", request);
             throw new RuntimeException(e);
         }
     }
