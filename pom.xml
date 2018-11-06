@@ -4,20 +4,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>fi.vm.sade.valintaperusteet</groupId>
-        <artifactId>valintaperusteet</artifactId>
-        <version>5.1-SNAPSHOT</version>
-        <relativePath>..</relativePath>
-    </parent>
-
+    <groupId>fi.vm.sade.valintaperusteet</groupId>
     <artifactId>sharedutils</artifactId>
+    <version>5.1-SNAPSHOT</version>
+
     <name>Sharedutils</name>
 
     <dependencies>
         <dependency>
             <groupId>fi.vm.sade</groupId>
             <artifactId>auditlogger</artifactId>
+            <version>8.3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.flipkart.zjsonpatch</groupId>
@@ -27,28 +24,43 @@
         <dependency>
             <groupId>fi.vm.sade.java-utils</groupId>
             <artifactId>java-http</artifactId>
+            <version>0.1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
+            <version>7.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>javax.ws.rs</groupId>
             <artifactId>javax.ws.rs-api</artifactId>
+            <version>2.1</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
+            <version>4.1.2.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.jasig.cas.client</groupId>
             <artifactId>cas-client-core</artifactId>
+            <version>3.4.1</version>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
+          <plugin>
+                <inherited>true</inherited>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -62,4 +74,58 @@
             </plugin>
         </plugins>
     </build>
+
+    <repositories>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+        <updatePolicy>always</updatePolicy>
+        <checksumPolicy>warn</checksumPolicy>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+        <checksumPolicy>warn</checksumPolicy>
+      </snapshots>
+      <id>oph-sade-artifactory</id>
+      <name>oph-sade-artifactory-snapshots</name>
+      <url>https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local</url>
+    </repository>
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+        <checksumPolicy>warn</checksumPolicy>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+        <updatePolicy>always</updatePolicy>
+        <checksumPolicy>warn</checksumPolicy>
+      </snapshots>
+      <id>oph-sade-artifactory-releases</id>
+      <name>oph-sade-artifactory-releases</name>
+      <url>https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local</url>
+    </repository>
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>central</id>
+      <name>Central Repository</name>
+      <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
+  </repositories>
+
+    <distributionManagement>
+      <repository>
+        <id>oph-sade-artifactory</id>
+        <name>oph-sade-artifactory-releases</name>
+        <url>https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local</url>
+      </repository>
+      <snapshotRepository>
+        <id>oph-sade-artifactory</id>
+        <name>oph-sade-artifactory-snapshots</name>
+        <url>https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local</url>
+      </snapshotRepository>
+    </distributionManagement>
 </project>
