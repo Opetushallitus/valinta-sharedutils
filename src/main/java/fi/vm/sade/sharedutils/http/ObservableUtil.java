@@ -1,7 +1,7 @@
 package fi.vm.sade.valinta.sharedutils.http;
 
-import rx.Observable;
-import rx.observables.ConnectableObservable;
+import io.reactivex.Observable;
+import io.reactivex.observables.ConnectableObservable;
 
 public class ObservableUtil {
     public static <T> Observable<T> wrapAsRunOnlyOnceObservable(Observable<T> o) {

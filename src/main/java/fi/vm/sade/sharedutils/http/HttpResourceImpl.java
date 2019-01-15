@@ -3,15 +3,15 @@ package fi.vm.sade.valinta.sharedutils.http;
 import static fi.vm.sade.valinta.sharedutils.http.HttpExceptionWithResponse.IS_CAS_302_REDIRECT;
 import com.google.gson.Gson;
 
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.cxf.jaxrs.client.ClientConfiguration;
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.reactivestreams.Subscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Observable;
-import rx.Subscriber;
-import rx.functions.Func1;
-import rx.subscriptions.Subscriptions;
+import io.reactivex.Observable;
 
 import javax.ws.rs.client.AsyncInvoker;
 import javax.ws.rs.client.Entity;
@@ -25,7 +25,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 
-public class HttpResourceImpl implements HttpResource {
+public class HttpResourceImpl implements fi.vm.sade.valinta.sharedutils.http.HttpResource {
     private final Logger LOG = LoggerFactory.getLogger(getClass());
     private final WebClient webClient;
     private final Gson gson;
@@ -77,12 +77,12 @@ public class HttpResourceImpl implements HttpResource {
 
     @Override
     public <T, A> Observable<T> getAsObservableLazily(String path, Type type, Entity<A> entity) {
-        return requestAsValueExtractingObservableLazily(path, GsonResponseCallback.jsonExtractor(gson(), type), (client, cb) -> client.async().method("GET", entity, cb));
+        return requestAsValueExtractingObservableLazily(path, fi.vm.sade.valinta.sharedutils.http.GsonResponseCallback.jsonExtractor(gson(), type), (client, cb) -> client.async().method("GET", entity, cb));
     }
 
     @Override
     public <T> Observable<T> getAsObservableLazily(String path, Type type, Function<WebClient, WebClient> paramsHeadersAndStuff) {
-        return getAsObservableLazily(path, GsonResponseCallback.jsonExtractor(gson(), type), paramsHeadersAndStuff);
+        return getAsObservableLazily(path, fi.vm.sade.valinta.sharedutils.http.GsonResponseCallback.jsonExtractor(gson(), type), paramsHeadersAndStuff);
     }
 
     @Override
@@ -139,38 +139,38 @@ public class HttpResourceImpl implements HttpResource {
         });
     }
 
-    private Observable<Response> requestAsPlainObservableLazily(final String path, final BiFunction<WebClient, ResponseCallback, Future<Response>> f) {
+    private Observable<Response> requestAsPlainObservableLazily(final String path, final BiFunction<WebClient, fi.vm.sade.valinta.sharedutils.http.ResponseCallback, Future<Response>> f) {
         return requestAsObservableLazily(path, (webclient, subscriber) -> {
-            final ResponseCallback callback = new ResponseCallback(path, response -> {
+            final fi.vm.sade.valinta.sharedutils.http.ResponseCallback callback = new fi.vm.sade.valinta.sharedutils.http.ResponseCallback(path, response -> {
                 subscriber.onNext(response);
-                subscriber.onCompleted();
+                subscriber.onComplete();
             }, subscriber::onError);
             return f.apply(webclient, callback);
         });
     }
 
     private <T> Observable<T> requestAsJsonObservableLazily(final String path, final Type type, final BiFunction<WebClient, InvocationCallback, Future<T>> f) {
-        return requestAsValueExtractingObservableLazily(path, GsonResponseCallback.jsonExtractor(gson(), type), f);
+        return requestAsValueExtractingObservableLazily(path, fi.vm.sade.valinta.sharedutils.http.GsonResponseCallback.jsonExtractor(gson(), type), f);
     }
 
     private <T> Observable<T> requestAsValueExtractingObservableLazily(final String path, final Function<String, T> extractor, final BiFunction<WebClient, InvocationCallback, Future<T>> f) {
         return requestAsObservableLazily(path, (webclient, subscriber) -> {
-            final InvocationCallback callback = new ExtractSuccessfullResponseCallback<>(path, value -> {
+            final InvocationCallback callback = new fi.vm.sade.valinta.sharedutils.http.ExtractSuccessfullResponseCallback<T>(path, value -> {
                 subscriber.onNext(value);
-                subscriber.onCompleted();
+                subscriber.onComplete();
             }, subscriber::onError, extractor);
             return f.apply(webclient, callback);
         });
     }
 
-    private <T> Observable<T> requestAsObservableLazily(final String path, final BiFunction<WebClient, Subscriber<? super T>, Future<T>> f) {
+    private <T> Observable<T> requestAsObservableLazily(final String path, final BiFunction<WebClient, ObservableEmitter<? super T>, Future<T>> f) {
         return Observable.<T>create(subscriber -> {
             final Future<T> future = f.apply(getWebClient().path(path).accept(MediaType.APPLICATION_JSON_TYPE), subscriber);
-            subscriber.add(Subscriptions.create(() -> future.cancel(true)));
+            // subscriber.setCancellable(() -> future.cancel(true)); // OY-280 : This causes a lot of output, but does not seem to break functionality...
         }).retryWhen(retryOnHttp302(path)).share();
     }
 
-    private Func1<Observable<? extends Throwable>, Observable<Throwable>> retryOnHttp302(String path) {
+    private io.reactivex.functions.Function<Observable<? extends Throwable>, Observable<Throwable>> retryOnHttp302(String path) {
         return exceptions -> {
             Observable<Throwable> retriesForCasRedirects = exceptions.filter(IS_CAS_302_REDIRECT)
                 .zipWith(Observable.range(0, maxRetries), Pair::of).flatMap(counterAndThrowable -> {
@@ -188,7 +188,7 @@ public class HttpResourceImpl implements HttpResource {
                     });
                 });
             return retriesForCasRedirects.mergeWith(exceptions
-                .filter(x1 -> !IS_CAS_302_REDIRECT.call(x1))
+                .filter(x1 -> !IS_CAS_302_REDIRECT.test(x1))
                 .doOnNext(otherThanCasRedirectException -> {
                     if (otherThanCasRedirectException instanceof RuntimeException) {
                         throw (RuntimeException) otherThanCasRedirectException;

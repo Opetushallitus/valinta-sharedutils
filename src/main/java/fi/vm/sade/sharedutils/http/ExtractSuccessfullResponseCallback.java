@@ -35,7 +35,7 @@ public class ExtractSuccessfullResponseCallback<T> implements InvocationCallback
     public void completed(Response response) {
         if (response.getStatus() >= 300) {
             String msg = String.format("%s HTTP %d", url, response.getStatus());
-            failureCallback.accept(new HttpExceptionWithResponse(msg, response));
+            failureCallback.accept(new fi.vm.sade.valinta.sharedutils.http.HttpExceptionWithResponse(msg, response));
             return;
         }
         String responseString = StringUtils.EMPTY;
