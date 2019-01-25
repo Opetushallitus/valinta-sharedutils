@@ -43,6 +43,11 @@ public class ExtractSuccessfullResponseCallback<T> implements InvocationCallback
             responseString = readResponseAsString(response, responseString);
             T t = extractor.apply(responseString);
             try {
+                if (t == null) {
+                    String errorMessage = String.format("Saatiin null vastaus URLista '%s'", url);
+                    LOG.error(errorMessage);
+                    throw new RuntimeException(errorMessage);
+                }
                 callback.accept(t);
             } catch (Exception e) {
                 LOG.error(
