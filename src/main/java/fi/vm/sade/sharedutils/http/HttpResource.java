@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.apache.cxf.jaxrs.client.WebClient;
-import rx.Observable;
+import io.reactivex.Observable;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 public interface HttpResource {
-    Gson DEFAULT_GSON = DateDeserializer.gsonBuilder().create();
+    Gson DEFAULT_GSON = fi.vm.sade.valinta.sharedutils.http.DateDeserializer.gsonBuilder().create();
     long DEFAULT_CLIENT_TIMEOUT_MS = TimeUnit.SECONDS.toMillis(120L);
     Function<WebClient, WebClient> ACCEPT_JSON = client -> client.accept(MediaType.APPLICATION_JSON_TYPE);
 
@@ -30,7 +30,7 @@ public interface HttpResource {
         bean.setThreadSafe(true);
         List<Object> providers = Lists.newArrayList();
         providers.add(new com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider());
-        providers.add(new ObjectMapperProvider());
+        providers.add(new fi.vm.sade.valinta.sharedutils.http.ObjectMapperProvider());
         bean.setProviders(providers);
         return bean;
     }

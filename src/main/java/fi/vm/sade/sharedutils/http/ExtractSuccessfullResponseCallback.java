@@ -35,7 +35,7 @@ public class ExtractSuccessfullResponseCallback<T> implements InvocationCallback
     public void completed(Response response) {
         if (response.getStatus() >= 300) {
             String msg = String.format("%s HTTP %d", url, response.getStatus());
-            failureCallback.accept(new HttpExceptionWithResponse(msg, response));
+            failureCallback.accept(new fi.vm.sade.valinta.sharedutils.http.HttpExceptionWithResponse(msg, response));
             return;
         }
         String responseString = StringUtils.EMPTY;
@@ -43,6 +43,11 @@ public class ExtractSuccessfullResponseCallback<T> implements InvocationCallback
             responseString = readResponseAsString(response, responseString);
             T t = extractor.apply(responseString);
             try {
+                if (t == null) {
+                    String errorMessage = String.format("Saatiin null vastaus URLista '%s'", url);
+                    LOG.error(errorMessage);
+                    throw new RuntimeException(errorMessage);
+                }
                 callback.accept(t);
             } catch (Exception e) {
                 LOG.error(

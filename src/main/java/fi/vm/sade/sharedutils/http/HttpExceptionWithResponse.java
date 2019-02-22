@@ -3,7 +3,6 @@ package fi.vm.sade.valinta.sharedutils.http;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import rx.functions.Func1;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -11,11 +10,10 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 
 public class HttpExceptionWithResponse extends RuntimeException {
     public static final Map.Entry<String,String> CAS_302_REDIRECT_MARKER = Pair.of("X-Oph-CAS-Redirect", "true");
-    public static final Func1<Throwable, Boolean> IS_CAS_302_REDIRECT = e ->
+    public static final io.reactivex.functions.Predicate<Throwable> IS_CAS_302_REDIRECT = e ->
     {
         Optional<HttpExceptionWithResponse> exceptionWithResponse = HttpExceptionWithResponse.findWrappedHttpExceptionWithResponse(e);
         return exceptionWithResponse.map(hewr ->
@@ -55,7 +53,7 @@ public class HttpExceptionWithResponse extends RuntimeException {
         return matches(hewr -> hewr.status == expected.getStatusCode(), throwable);
     }
 
-    public static boolean matches(Function<HttpExceptionWithResponse, Boolean> predicate, Throwable throwable) {
+    public static boolean matches(java.util.function.Function<HttpExceptionWithResponse, Boolean> predicate, Throwable throwable) {
         return findWrappedHttpExceptionWithResponse(throwable)
             .map(predicate)
             .orElse(false);

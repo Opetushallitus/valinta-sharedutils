@@ -42,10 +42,10 @@ public class ResponseCallback implements InvocationCallback<Response> {
                         callback.accept(response);
                     } else {
                         String msg = String.format("Expected status code 200-299 from %s but got code %d",
-                            CxfExceptionLogger.getCxfUrl(response),
+                            fi.vm.sade.valinta.sharedutils.http.CxfExceptionLogger.getCxfUrl(response),
                             response.getStatus());
                         LOG.error(msg);
-                        failureCallback.accept(new HttpExceptionWithResponse(msg, response));
+                        failureCallback.accept(new fi.vm.sade.valinta.sharedutils.http.HttpExceptionWithResponse(msg, response));
                     }
                 } else {
                     callback.accept(response);
@@ -77,7 +77,7 @@ public class ResponseCallback implements InvocationCallback<Response> {
             LOG.error("Jotain meni pieleen epäonnistuneen responsen käsittelyssä", t);
         } finally {
             if (cancellationException) {
-                LOG.debug("Oltiin epäonnistuneen kutsun käsittelyssä " + CancellationException.class.getSimpleName() + " :n kanssa");
+                LOG.warn("Oltiin epäonnistuneen kutsun käsittelyssä " + CancellationException.class.getSimpleName() + " :n kanssa");
             } else {
                 LOG.info("Oltiin epäonnistuneen kutsun käsittelyssä");
             }
