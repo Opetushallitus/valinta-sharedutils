@@ -13,6 +13,7 @@
     <properties>
         <commons-lang.version>2.6</commons-lang.version>
         <tomcat.version>7.0.39</tomcat.version>
+        <spring.security.version>4.2.11.RELEASE</spring.security.version>
     </properties>
 
 
@@ -46,7 +47,7 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
-            <version>4.1.2.RELEASE</version>
+            <version>${spring.security.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jasig.cas.client</groupId>
@@ -105,7 +106,7 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
-            <version>4.1.2.RELEASE</version>
+            <version>${spring.security.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
