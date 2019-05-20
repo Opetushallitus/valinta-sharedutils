@@ -1,4 +1,4 @@
-package fi.vm.sade.sharedutils;
+package fi.vm.sade.valinta.sharedutils;
 
 import com.google.common.collect.Maps;
 import fi.vm.sade.auditlog.*;

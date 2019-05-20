@@ -1,4 +1,4 @@
-package fi.vm.sade.sharedutils;
+package fi.vm.sade.valinta.sharedutils;
 
 import org.jasig.cas.client.authentication.SimplePrincipal;
 import org.slf4j.Logger;

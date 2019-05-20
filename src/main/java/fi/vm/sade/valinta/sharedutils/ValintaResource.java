@@ -1,4 +1,4 @@
-package fi.vm.sade.sharedutils;
+package fi.vm.sade.valinta.sharedutils;
 
 public enum ValintaResource {
     KOOSTE,

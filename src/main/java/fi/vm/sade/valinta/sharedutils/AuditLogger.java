@@ -1,4 +1,4 @@
-package fi.vm.sade.sharedutils;
+package fi.vm.sade.valinta.sharedutils;
 
 import fi.vm.sade.auditlog.Logger;
 import org.slf4j.LoggerFactory;
