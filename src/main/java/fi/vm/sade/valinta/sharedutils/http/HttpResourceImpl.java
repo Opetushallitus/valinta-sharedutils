@@ -3,15 +3,13 @@ package fi.vm.sade.valinta.sharedutils.http;
 import static fi.vm.sade.valinta.sharedutils.http.HttpExceptionWithResponse.IS_CAS_302_REDIRECT;
 import com.google.gson.Gson;
 
+import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.cxf.jaxrs.client.ClientConfiguration;
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.reactivestreams.Subscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import io.reactivex.Observable;
 
 import javax.ws.rs.client.AsyncInvoker;
 import javax.ws.rs.client.Entity;
