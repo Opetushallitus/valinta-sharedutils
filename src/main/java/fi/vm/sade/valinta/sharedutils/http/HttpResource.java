@@ -19,6 +19,7 @@ public interface HttpResource {
     Gson DEFAULT_GSON = fi.vm.sade.valinta.sharedutils.http.DateDeserializer.gsonBuilder().create();
     long DEFAULT_CLIENT_TIMEOUT_MS = TimeUnit.SECONDS.toMillis(120L);
     Function<WebClient, WebClient> ACCEPT_JSON = client -> client.accept(MediaType.APPLICATION_JSON_TYPE);
+    String CALLER_ID = "Caller-Id";
 
     static JAXRSClientFactoryBean getJaxrsClientFactoryBean() {
         return getJaxrsClientFactoryBean("");

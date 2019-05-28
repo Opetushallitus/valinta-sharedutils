@@ -14,6 +14,7 @@
         <commons-lang.version>2.6</commons-lang.version>
         <tomcat.version>7.0.39</tomcat.version>
         <spring.security.version>4.2.11.RELEASE</spring.security.version>
+        <cxf.version>3.3.2</cxf.version>
     </properties>
 
 
@@ -31,7 +32,7 @@
         <dependency>
             <groupId>fi.vm.sade.java-utils</groupId>
             <artifactId>java-http</artifactId>
-            <version>0.1.1-SNAPSHOT</version>
+            <version>0.2.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
@@ -62,7 +63,7 @@
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxws</artifactId>
-            <version>3.2.4</version>
+            <version>${cxf.version}</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -74,7 +75,7 @@
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-rs-client</artifactId>
-            <version>3.2.4</version>
+            <version>${cxf.version}</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -90,7 +91,7 @@
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-transports-http</artifactId>
-            <version>3.2.4</version>
+            <version>${cxf.version}</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
