@@ -6,7 +6,7 @@
 
     <groupId>fi.vm.sade.valintaperusteet</groupId>
     <artifactId>sharedutils</artifactId>
-    <version>5.4-SNAPSHOT</version>
+    <version>5.5-SNAPSHOT</version>
 
     <name>Sharedutils</name>
 

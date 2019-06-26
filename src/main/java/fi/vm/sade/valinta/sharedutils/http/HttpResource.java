@@ -3,9 +3,9 @@ package fi.vm.sade.valinta.sharedutils.http;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 
+import io.reactivex.Observable;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.apache.cxf.jaxrs.client.WebClient;
-import io.reactivex.Observable;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
@@ -48,6 +48,8 @@ public interface HttpResource {
     <T, A> Observable<T> getAsObservableLazily(String path, final Type type, Entity<A> getBody);
 
     <T> Observable<T> getAsObservableLazily(String path, final Type type, Function<WebClient, WebClient> paramsHeadersAndStuff);
+
+    <T> Observable<T> getAsObservableLazilyWithInputStream(String path, Type type, Function<WebClient, WebClient> paramsHeadersAndStuff);
 
     <T> Observable<T> getAsObservableLazily(String path, Function<String, T> extractor, Function<WebClient, WebClient> paramsHeadersAndStuff);
 

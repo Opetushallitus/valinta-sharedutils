@@ -16,6 +16,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.InvocationCallback;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -81,6 +82,15 @@ public class HttpResourceImpl implements fi.vm.sade.valinta.sharedutils.http.Htt
     @Override
     public <T> Observable<T> getAsObservableLazily(String path, Type type, Function<WebClient, WebClient> paramsHeadersAndStuff) {
         return getAsObservableLazily(path, fi.vm.sade.valinta.sharedutils.http.GsonResponseCallback.jsonExtractor(gson(), type), paramsHeadersAndStuff);
+    }
+
+    @Override
+    public <T> Observable<T> getAsObservableLazilyWithInputStream(String path, Type type, Function<WebClient, WebClient> paramsHeadersAndStuff) {
+        return getAsObservableLazilyWithInputStream(path, fi.vm.sade.valinta.sharedutils.http.GsonResponseInpuStreamCallback.jsonExtractor(gson(), type), paramsHeadersAndStuff);
+    }
+
+    private <T> Observable<T> getAsObservableLazilyWithInputStream(String path, Function<InputStream, T> extractor, Function<WebClient, WebClient> paramsHeadersAndStuff) {
+        return requestAsValueExtractingObservableLazilyWithInputStream(path, extractor, (client, cb) -> paramsHeadersAndStuff.apply(client).async().get(cb));
     }
 
     @Override
@@ -161,6 +171,15 @@ public class HttpResourceImpl implements fi.vm.sade.valinta.sharedutils.http.Htt
         });
     }
 
+    private <T> Observable<T> requestAsValueExtractingObservableLazilyWithInputStream(final String path, final Function<InputStream, T> extractor, final BiFunction<WebClient, InvocationCallback, Future<T>> f) {
+        return requestAsObservableLazily(path, (webclient, subscriber) -> {
+            final InvocationCallback callback = new fi.vm.sade.valinta.sharedutils.http.ExtractSuccessfullResponseFromStreamCallback<T>(path, value -> {
+                subscriber.onNext(value);
+                subscriber.onComplete();
+            }, subscriber::onError, extractor);
+            return f.apply(webclient, callback);
+        });
+    }
     private <T> Observable<T> requestAsObservableLazily(final String path, final BiFunction<WebClient, ObservableEmitter<? super T>, Future<T>> f) {
         return Observable.<T>create(subscriber -> {
             final Future<T> future = f.apply(getWebClient().path(path).accept(MediaType.APPLICATION_JSON_TYPE), subscriber);
