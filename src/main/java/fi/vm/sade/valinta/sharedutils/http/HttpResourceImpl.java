@@ -5,11 +5,13 @@ import com.google.gson.Gson;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.cxf.jaxrs.client.ClientConfiguration;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 import javax.ws.rs.client.AsyncInvoker;
 import javax.ws.rs.client.Entity;
@@ -18,6 +20,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
@@ -27,16 +30,27 @@ import java.util.function.Function;
 public class HttpResourceImpl implements fi.vm.sade.valinta.sharedutils.http.HttpResource {
     private final Logger LOG = LoggerFactory.getLogger(getClass());
     private final WebClient webClient;
+    private final String callerId;
     private final Gson gson;
     private final int maxRetries = 3;
     private final int millisecondsToWaitMultiplier = 100;
 
-    HttpResourceImpl(Gson gson, WebClient webClient, long timeoutMillis) {
+    HttpResourceImpl(Gson gson, WebClient webClient, String callerId, long timeoutMillis) {
         this.gson = gson;
         this.webClient = webClient;
+        this.callerId = callerId;
+
+        Assert.isTrue(StringUtils.isNotBlank(callerId), "Please give non-empty callerId: got '" + callerId + "'");
         ClientConfiguration c = WebClient.getConfig(webClient);
         c.getHttpConduit().getClient().setReceiveTimeout(timeoutMillis);
         c.getHttpConduit().getClient().setConnectionTimeout(timeoutMillis);
+
+        List<String> callerIdValues = webClient.getHeaders().get(CALLER_ID);
+        if (!callerIdValues.isEmpty() && !callerId.equals(callerIdValues.get(0))) {
+            throw new IllegalArgumentException(String.format("Expected callerId value '%s' " +
+                "from constructor parameters to equal value '%s' in webClient. " +
+                "WebClient whole list: %s", callerId, callerIdValues.get(0), callerIdValues));
+        }
     }
 
     @Override
@@ -45,11 +59,17 @@ public class HttpResourceImpl implements fi.vm.sade.valinta.sharedutils.http.Htt
     }
 
     /**
+     * Asettaa myös Caller-Id -headerin, joka ei näy WebClientistä eri säikeiden välillä.
+     *
      * @return klooni konfiguroidusta webclientistä. cxf:n webclient objekti muuttuu joka palvelukutsulla.
      * koheesion vuoksi käytetään kloonia.
      */
     private WebClient getWebClient() {
-        return WebClient.fromClient(webClient);
+        return fromClientWithCallerId(this.webClient);
+    }
+
+    protected WebClient fromClientWithCallerId(WebClient client) {
+        return WebClient.fromClient(client).header(CALLER_ID, callerId);
     }
 
     /* *** New lazily evaluated, non-replayed methods start here *** */

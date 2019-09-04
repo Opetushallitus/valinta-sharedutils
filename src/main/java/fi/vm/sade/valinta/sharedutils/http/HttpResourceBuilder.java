@@ -1,5 +1,6 @@
 package fi.vm.sade.valinta.sharedutils.http;
 
+import static fi.vm.sade.valinta.sharedutils.http.HttpResource.CALLER_ID;
 import com.google.gson.Gson;
 
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
@@ -17,13 +18,15 @@ import java.util.concurrent.TimeUnit;
  * {@code HttpResourceBuilder().jaxrsClientFactoryBean(someBean).build();}
  */
 public class HttpResourceBuilder {
-
+    private final String callerIdHeaderValue;
     private String address = "";
     private long timeoutMillis = TimeUnit.SECONDS.toMillis(120L);
     private Gson gson = HttpResource.DEFAULT_GSON;
     private JAXRSClientFactoryBean jaxrsClientFactoryBean;
 
-    public HttpResourceBuilder() {}
+    public HttpResourceBuilder(String callerIdHeaderValue) {
+        this.callerIdHeaderValue = callerIdHeaderValue;
+    }
 
     public HttpResourceBuilder address(String val) {
         address = val;
@@ -58,19 +61,23 @@ public class HttpResourceBuilder {
         if (jaxrsClientFactoryBean == null) {
             this.jaxrsClientFactoryBean = HttpResource.getJaxrsClientFactoryBean(address);
         }
-        return new WebClientExposingHttpResource(this.gson, this.jaxrsClientFactoryBean.createWebClient(), this.timeoutMillis);
+        return new WebClientExposingHttpResource(
+            this.gson,
+            this.jaxrsClientFactoryBean.createWebClient()
+                .header(CALLER_ID, callerIdHeaderValue),
+            this.timeoutMillis);
     }
 
     public class WebClientExposingHttpResource extends HttpResourceImpl {
         private final WebClient webClient;
 
         WebClientExposingHttpResource(Gson gson, WebClient webClient, long timeoutMillis) {
-            super(gson, webClient, timeoutMillis);
-            this.webClient = webClient;
+            super(gson, webClient, callerIdHeaderValue, timeoutMillis);
+            this.webClient = webClient.header(CALLER_ID, callerIdHeaderValue);
         }
 
         public WebClient getWebClient() {
-            return WebClient.fromClient(webClient);
+            return fromClientWithCallerId(webClient);
         }
     }
 }
