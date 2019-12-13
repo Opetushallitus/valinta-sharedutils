@@ -10,6 +10,7 @@ public enum ValintaResource {
     LASKENTAKAAVA,
     VALINTARYHMA,
     HAKIJARYHMA,
+    HAKU,
     HAKUKOHDE,
     VALINTATAPAJONO,
     VALINNANVAIHE,
