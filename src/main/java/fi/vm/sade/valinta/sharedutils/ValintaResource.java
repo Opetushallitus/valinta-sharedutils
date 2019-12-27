@@ -3,6 +3,7 @@ package fi.vm.sade.valinta.sharedutils;
 public enum ValintaResource {
     KOOSTE,
     LASKENTA,
+    LASKENTATOTEUTUS,
     SIJOITTELU,
     VALINTAPERUSTEET,
     JARJESTYSKRITEERIT,
