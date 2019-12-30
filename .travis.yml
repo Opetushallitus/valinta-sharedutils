@@ -28,4 +28,4 @@ deploy:
   script: "mvn deploy -B -DskipTests --settings ci-tools/common/maven-settings.xml"
   skip_cleanup: true
   on:
-    branch: SEC-87__auditlog
+    branch: master
