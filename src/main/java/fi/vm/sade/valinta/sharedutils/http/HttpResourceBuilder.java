@@ -77,7 +77,7 @@ public class HttpResourceBuilder {
         }
 
         public WebClient getWebClient() {
-            return fromClientWithCallerId(webClient);
+            return fromClientWithCallerIdAndCsrf(webClient);
         }
     }
 }

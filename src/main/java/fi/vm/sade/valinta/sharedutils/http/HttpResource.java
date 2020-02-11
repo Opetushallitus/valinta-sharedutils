@@ -20,6 +20,7 @@ public interface HttpResource {
     long DEFAULT_CLIENT_TIMEOUT_MS = TimeUnit.SECONDS.toMillis(120L);
     Function<WebClient, WebClient> ACCEPT_JSON = client -> client.accept(MediaType.APPLICATION_JSON_TYPE);
     String CALLER_ID = "Caller-Id";
+    String CSRF_VALUE = "CSRF";
 
     static JAXRSClientFactoryBean getJaxrsClientFactoryBean() {
         return getJaxrsClientFactoryBean("");
