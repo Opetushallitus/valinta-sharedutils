@@ -59,17 +59,20 @@ public class HttpResourceImpl implements fi.vm.sade.valinta.sharedutils.http.Htt
     }
 
     /**
-     * Asettaa myös Caller-Id -headerin, joka ei näy WebClientistä eri säikeiden välillä.
+     * Asettaa myös Caller-Id, CSRF ja Cookie -headerit, jotka eivät näy WebClientistä eri säikeiden välillä.
      *
      * @return klooni konfiguroidusta webclientistä. cxf:n webclient objekti muuttuu joka palvelukutsulla.
      * koheesion vuoksi käytetään kloonia.
      */
     private WebClient getWebClient() {
-        return fromClientWithCallerId(this.webClient);
+        return fromClientWithCallerIdAndCsrf(this.webClient);
     }
 
-    protected WebClient fromClientWithCallerId(WebClient client) {
-        return WebClient.fromClient(client).header(CALLER_ID, callerId);
+    protected WebClient fromClientWithCallerIdAndCsrf(WebClient client) {
+        return WebClient.fromClient(client)
+                .header(CALLER_ID, callerId)
+                .header("CSRF", CSRF_VALUE)
+                .header("Cookie", String.format("CSRF=%s;", CSRF_VALUE));
     }
 
     /* *** New lazily evaluated, non-replayed methods start here *** */
