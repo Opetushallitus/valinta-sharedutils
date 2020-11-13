@@ -3,10 +3,14 @@ package fi.vm.sade.valinta.sharedutils.http;
 import org.apache.cxf.jaxrs.impl.ResponseImpl;
 import org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper;
 import org.apache.log4j.Logger;
+import org.springframework.security.access.AccessDeniedException;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
+
+import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
+import static javax.ws.rs.core.Response.Status.FORBIDDEN;
 
 /**
  * Looks like by default exceptions thrown by our CXF resources do not get logged.
@@ -17,6 +21,13 @@ public class CxfExceptionLogger implements ExceptionMapper<Exception> {
 
     @Override
     public Response toResponse(Exception exception) {
+        if(exception instanceof AccessDeniedException) {
+            LOG.debug("Access denied", exception);
+            return Response
+                    .status(FORBIDDEN)
+                    .entity("Käyttäjällä ei ole tarvittavia oikeuksia.")
+                    .type(TEXT_PLAIN).build();
+        }
         LOG.error("Uncaught exception", exception);
         if (exception instanceof WebApplicationException) {
             return defaultMapper.toResponse((WebApplicationException) exception);

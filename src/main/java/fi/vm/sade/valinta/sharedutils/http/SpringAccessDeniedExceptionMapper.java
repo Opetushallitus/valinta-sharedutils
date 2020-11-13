@@ -14,7 +14,7 @@ public class SpringAccessDeniedExceptionMapper implements ExceptionMapper<Access
 
     @Override
     public Response toResponse(AccessDeniedException exception) {
-        LOG.error("Access denied", exception);
+        LOG.debug("Access denied", exception);
         return Response
             .status(FORBIDDEN)
             .entity("Käyttäjällä ei ole tarvittavia oikeuksia.")
