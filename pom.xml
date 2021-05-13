@@ -12,7 +12,7 @@
 
     <properties>
         <commons-lang.version>2.6</commons-lang.version>
-        <tomcat.version>7.0.39</tomcat.version>
+        <tomcat.version>7.0.107</tomcat.version>
         <spring.security.version>4.2.14.RELEASE</spring.security.version>
         <cxf.version>3.3.5</cxf.version>
     </properties>
