@@ -21,6 +21,15 @@ jobs:
           distribution: 'corretto'
           cache: 'maven'
 
+      - name: Setup CI Tools
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          set -euo pipefail
+          git clone https://github.com/Opetushallitus/ci-tools.git
+          source ci-tools/common/setup-tools.sh
+
       - name: Build
         run: mvn clean package -B
 
