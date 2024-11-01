@@ -1,7 +1,7 @@
 package fi.vm.sade.valinta.sharedutils.http;
 
-import javax.ws.rs.client.InvocationCallback;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.InvocationCallback;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;

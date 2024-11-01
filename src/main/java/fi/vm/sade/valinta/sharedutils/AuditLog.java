@@ -12,8 +12,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.Assert;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
+import jakarta.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.security.Principal;
 import java.util.Map;
@@ -22,7 +21,7 @@ public class AuditLog {
     private static final Logger LOG = LoggerFactory.getLogger(AuditLog.class);
     private static final String TARGET_EPASELVA = "Tuntematon tai muutosten implikoima kohde";
 
-    public static <T> void log(Audit audit, User user, Operation operation, ValintaResource valintaResource, String targetOid, Changes changes, @NotNull Map<String, String> additionalInfo) {
+    public static <T> void log(Audit audit, User user, Operation operation, ValintaResource valintaResource, String targetOid, Changes changes, Map<String, String> additionalInfo) {
         Target.Builder target = getTarget(valintaResource, targetOid);
         if (!MapUtils.isEmpty(additionalInfo)) {
             additionalInfo.forEach(target::setField);
