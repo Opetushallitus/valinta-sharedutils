@@ -31,6 +31,8 @@ jobs:
           source ci-tools/common/setup-tools.sh
 
       - name: Build
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: mvn clean package -B
 
       - name: Deploy
