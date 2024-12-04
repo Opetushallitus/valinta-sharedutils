@@ -31,7 +31,7 @@ public interface HttpResource {
         bean.setAddress(address);
         bean.setThreadSafe(true);
         List<Object> providers = Lists.newArrayList();
-        providers.add(new com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider());
+        providers.add(new com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider());
         providers.add(new fi.vm.sade.valinta.sharedutils.http.ObjectMapperProvider());
         bean.setProviders(providers);
         return bean;
