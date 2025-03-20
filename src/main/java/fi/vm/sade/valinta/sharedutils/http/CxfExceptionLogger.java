@@ -5,12 +5,12 @@ import org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper;
 import org.apache.log4j.Logger;
 import org.springframework.security.access.AccessDeniedException;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ExceptionMapper;
 
-import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
-import static javax.ws.rs.core.Response.Status.FORBIDDEN;
+import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN;
+import static jakarta.ws.rs.core.Response.Status.FORBIDDEN;
 
 /**
  * Looks like by default exceptions thrown by our CXF resources do not get logged.

@@ -7,9 +7,9 @@ import io.reactivex.Observable;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.apache.cxf.jaxrs.client.WebClient;
 
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -31,7 +31,7 @@ public interface HttpResource {
         bean.setAddress(address);
         bean.setThreadSafe(true);
         List<Object> providers = Lists.newArrayList();
-        providers.add(new com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider());
+        providers.add(new com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider());
         providers.add(new fi.vm.sade.valinta.sharedutils.http.ObjectMapperProvider());
         bean.setProviders(providers);
         return bean;
