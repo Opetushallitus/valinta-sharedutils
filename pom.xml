@@ -13,15 +13,15 @@
     <properties>
         <tomcat.version>10.1.50</tomcat.version>
         <cxf.version>4.1.4</cxf.version>
-        <jackson.version>2.21.2</jackson.version>
     </properties>
     <dependencyManagement>
         <dependencies>
-            <!-- korjataan com.flipkart.zjsonpatch:zjsonpatch:0.4.16 käyttämän kirjaston versio -->
             <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>2.21.2</version>
+                <scope>import</scope>
+                <type>pom</type>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -95,19 +95,16 @@
         <dependency>
             <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
             <artifactId>jackson-jakarta-rs-json-provider</artifactId>
-            <version>${jackson.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>${jackson.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>2.21</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
